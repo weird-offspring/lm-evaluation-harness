@@ -169,6 +169,12 @@ def setup_parser() -> argparse.ArgumentParser:
         help="System instruction to be used in the prompt",
     )
     parser.add_argument(
+        "--system_instrfile",
+        type=str,
+        default=None,
+        help="System instruction file to be used in the prompt",
+    )
+    parser.add_argument(
         "--apply_chat_template",
         type=str,
         nargs="?",
@@ -386,6 +392,10 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
         cache_requests=args.cache_requests
     )
 
+    system_instruction = args.system_instruction
+    if args.system_instrfile:
+        system_instruction = open(args.system_instrfile).read()
+
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -400,7 +410,7 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
         write_out=args.write_out,
         log_samples=args.log_samples,
         evaluation_tracker=evaluation_tracker,
-        system_instruction=args.system_instruction,
+        system_instruction=system_instruction,
         apply_chat_template=args.apply_chat_template,
         fewshot_as_multiturn=args.fewshot_as_multiturn,
         gen_kwargs=args.gen_kwargs,

@@ -106,7 +106,21 @@ def simple_parse_args_string(args_string):
     args_dict = {
         k: handle_arg_string(v) for k, v in [arg.split("=") for arg in arg_list]
     }
-    return args_dict
+
+    # if file provided, read them
+    args_dict_special = {}
+    special = '@file'
+    for k, v in args_dict.items():
+        if special in k:
+            fn = v
+            i = k.replace(special, '')
+
+            eval_logger.debug(f"Reading {fn} for {i}")
+            k, v = i, open(fn).read()
+
+        args_dict_special[k] = v
+
+    return args_dict_special
 
 
 def join_iters(iters):
